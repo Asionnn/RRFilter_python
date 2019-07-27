@@ -11,3 +11,6 @@
 * The data is passed into Heartpy, which calculates the RR intervals
 * The intervals data are passed through the [methods defined in hrvanalysis](https://robinchampseix.github.io/hrvanalysis/hrvanalysis.html#module-hrvanalysis.preprocessing)
 * Finally, the filtered intervals are written to a user defined location.
+
+# Questions?
+* contact me at li2718@purdue.edu if you have any questions
