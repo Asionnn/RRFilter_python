@@ -1,5 +1,8 @@
 # RRFilter_python
 
+# Python Version Used
+* 3.7
+
 # Important Python libraries used
 * [Heartpy](https://pypi.org/project/heartpy/)
 * [hrvanalysis](https://pypi.org/project/hrv-analysis/)
