@@ -12,16 +12,19 @@ from hrvanalysis import get_time_domain_features
 from hrvanalysis import remove_outliers, remove_ectopic_beats, interpolate_nan_values
 from scipy.signal import butter, lfilter
 
+#Usage: Import a file, choose a destination, click filter
 
 class RRWindow(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.master = master
 
-
+# Global Variables
 file_name = ""
 dst = ""
 parent_dir = '.'
+low_rri = 600
+high_rri = 1200
 
 
 # set up window
@@ -91,10 +94,12 @@ def filter_btn_press():
         data = pd.read_csv(
             window.filename,
             skiprows=[0, 1, 2, 3, 4, 5, 6, 7], sep='\t')
+        print(data)
         del data[" "]
         del data[' .1']
         del data[' Filtered Current ']
 
+        # 0.4 is lowcut, 2 is highcut
         filtered = butter_bandpass_filter(data[" Current "], 0.4, 2, 500, order=3)
 
         # rejects outliers, passed through 3 times
@@ -106,9 +111,11 @@ def filter_btn_press():
         np_removed_outliers = np.array(np_removed_outliers)
         working_data, measures = hp.process(np_removed_outliers, 500, report_time=True, freq_method="fft")
 
+        global low_rri
+        global high_rri
         # filter RR outliers
         rr_intervals_list = working_data['RR_list']
-        rr_removed_outliers = remove_outliers(rr_intervals=rr_intervals_list, low_rri=600, high_rri=1200, verbose=False)
+        rr_removed_outliers = remove_outliers(rr_intervals=rr_intervals_list, low_rri=low_rri, high_rri=high_rri, verbose=False)
         rr_interpolated = interpolate_nan_values(rr_intervals=rr_removed_outliers, interpolation_method="linear")
         nn_intervals = remove_ectopic_beats(rr_intervals=rr_interpolated, method="malik")
         nn_interpolated = interpolate_nan_values(rr_intervals=nn_intervals)
