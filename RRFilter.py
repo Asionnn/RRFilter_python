@@ -1,6 +1,6 @@
 import os
 from tkinter import *
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 
 import heartpy as hp
 import math
@@ -50,29 +50,10 @@ def reject_outliers(data):
     sd = np.std(np_array, axis=0)
     final_list = list()
 
-    for i in range(len(data)):
-        if data[i] > (mean - 2 * sd):
-            final_list.append(data[i])
-
-    indexes = []
-    for j in range(len(final_list)):
-        if not final_list[j] < (mean + 2 * sd):
-            indexes.append(j)
-
-    for k in range(len(indexes)):
-        final_list[indexes[k]] = -1
-
-    complete_list = []
-    for pos in range(len(final_list)):
-        if final_list[pos] != -1:
-            complete_list.append(final_list[pos])
-
-    '''
     final_list = [x for x in data if (x > mean - 2 * sd)]
     final_list = [x for x in final_list if (x < mean + 2 * sd)]
-    '''
 
-    return complete_list
+    return final_list
 
 
 def import_btn_press():
@@ -104,8 +85,6 @@ def filter_btn_press():
 
         # rejects outliers, passed through 3 times
         np_removed_outliers = reject_outliers(filtered)
-        np_removed_outliers = reject_outliers(np_removed_outliers)
-        np_removed_outliers = reject_outliers(np_removed_outliers)
 
         # set up RR data
         np_removed_outliers = np.array(np_removed_outliers)
@@ -115,6 +94,8 @@ def filter_btn_press():
         global high_rri
         # filter RR outliers
         rr_intervals_list = working_data['RR_list']
+        print(working_data)
+        print(data[' Time '][66866])
         rr_removed_outliers = remove_outliers(rr_intervals=rr_intervals_list, low_rri=low_rri, high_rri=high_rri, verbose=False)
         rr_interpolated = interpolate_nan_values(rr_intervals=rr_removed_outliers, interpolation_method="linear")
         nn_intervals = remove_ectopic_beats(rr_intervals=rr_interpolated, method="malik")
@@ -155,7 +136,9 @@ def filter_btn_press():
         del data
 
     else:
-        print("error check here")
+        print("ERROR")
+        messagebox.showerror("Error", "Destination path not set")
+
 
 
 def dst_btn_press():
